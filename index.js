@@ -3,6 +3,9 @@ const mysql = require("mysql");
 // const expres = require("express");
 var app = express();
 const bodyparser = require("body-parser");
+
+const validation = require('./middleware/validationMiddleware');
+const userInput = require('./validation/userValidation');
 //const { FLOAT } = require("mysql/lib/protocol/constants/types");
 
 app.use(bodyparser.json());
@@ -105,6 +108,28 @@ app.post("/create", (req, res) => {
     }
   }
 );
+
+
+
+app.post("/create2",validation(userInput),(req, res) => {
+    const name = req.body.name;
+    const address = req.body.address;
+    const phone = req.body.phone;
+    const roll = req.body.roll;
+    //let email = req.body.email;
+    mysqlConnection.query(
+      "INSERT INTO student (name , address , phone , roll) VALUES (?,?,?,?)",
+      [name, address, phone, roll],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.send("value Inserted");
+        }
+      }
+    );
+  })
+
 
 app.delete("/student/:id", (req, res) => {
   const id = parseInt(req.params.id);
